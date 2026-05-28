@@ -3,6 +3,8 @@ import { useState } from "react";
 function App() {
   const [threatText, setThreatText] = useState("");
   const [result, setResult] = useState("");
+  const [riskLevel, setRiskLevel] = useState("");
+  const [keywords, setKeywords] = useState([]);
   return (
     <div className="min-h-screen bg-black text-white">
       
@@ -90,12 +92,20 @@ function App() {
       <button
   onClick={() => {
     if (threatText.toLowerCase().includes("win")) {
-      setResult("⚠ High Risk: Possible Scam Detected");
-    } else if (threatText.toLowerCase().includes("bank")) {
-      setResult("⚠ Suspicious Banking Message Detected");
-    } else {
-      setResult("✓ Content Looks Safe");
-    }
+  setResult("⚠ High Risk: Possible Scam Detected");
+  setRiskLevel("High");
+setKeywords(["win", "reward", "money"]);
+}
+else if (threatText.toLowerCase().includes("bank")) {
+  setResult("⚠ Suspicious Banking Message Detected");
+  setRiskLevel("Medium");
+setKeywords(["bank", "account", "verification"]);
+}
+else {
+  setResult("✓ Content Looks Safe");
+  setRiskLevel("Low");
+setKeywords(["safe", "normal"]);
+}
   }}
   className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-xl transition duration-300"
 >
@@ -126,9 +136,17 @@ function App() {
           Risk Level
         </h4>
 
-        <p className="text-red-400 text-lg">
-          High
-        </p>
+        <p
+  className={`text-lg font-semibold ${
+    riskLevel === "High"
+      ? "text-red-400"
+      : riskLevel === "Medium"
+      ? "text-yellow-400"
+      : "text-green-400"
+  }`}
+>
+  {riskLevel}
+</p>
       </div>
 
       <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
@@ -137,8 +155,8 @@ function App() {
         </h4>
 
         <p className="text-white">
-          win, reward, urgent, bank
-        </p>
+  {keywords.join(", ")}
+</p>
       </div>
 
       <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">

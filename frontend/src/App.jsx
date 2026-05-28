@@ -90,21 +90,26 @@ function App() {
 
     <div className="flex justify-center mt-6">
       <button
-  onClick={() => {
-    if (threatText.toLowerCase().includes("win")) {
-  setResult("⚠ High Risk: Possible Scam Detected");
-  setRiskLevel("High");
-setKeywords(["win", "reward", "money"]);
-}
-else if (threatText.toLowerCase().includes("bank")) {
-  setResult("⚠ Suspicious Banking Message Detected");
-  setRiskLevel("Medium");
-setKeywords(["bank", "account", "verification"]);
-}
-else {
-  setResult("✓ Content Looks Safe");
-  setRiskLevel("Low");
-setKeywords(["safe", "normal"]);
+  onClick={async () => {
+    try {
+  const response = await fetch("http://localhost:5000/analyze", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: threatText,
+    }),
+  });
+
+  const data = await response.json();
+
+  setResult(data.result);
+  setRiskLevel(data.riskLevel);
+  setKeywords(data.keywords);
+
+} catch (error) {
+  console.log(error);
 }
   }}
   className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-xl transition duration-300"

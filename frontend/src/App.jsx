@@ -103,14 +103,56 @@ function App() {
 </button>
     </div>
     {result && (
-  <div className="mt-8 bg-black border border-cyan-500 rounded-xl p-5 text-center">
-    <h3 className="text-2xl text-cyan-400 font-bold">
-      Analysis Result
+  <div className="mt-8 bg-black border border-cyan-500 rounded-2xl p-6">
+
+    <h3 className="text-3xl text-cyan-400 font-bold text-center mb-6">
+      Threat Analysis Report
     </h3>
 
-    <p className="text-white mt-4 text-lg">
-      {result}
-    </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
+        <h4 className="text-cyan-400 text-xl font-semibold mb-2">
+          Threat Status
+        </h4>
+
+        <p className="text-white text-lg">
+          {result}
+        </p>
+      </div>
+
+      <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
+        <h4 className="text-cyan-400 text-xl font-semibold mb-2">
+          Risk Level
+        </h4>
+
+        <p className="text-red-400 text-lg">
+          High
+        </p>
+      </div>
+
+      <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
+        <h4 className="text-cyan-400 text-xl font-semibold mb-2">
+          Suspicious Keywords
+        </h4>
+
+        <p className="text-white">
+          win, reward, urgent, bank
+        </p>
+      </div>
+
+      <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
+        <h4 className="text-cyan-400 text-xl font-semibold mb-2">
+          Recommendation
+        </h4>
+
+        <p className="text-white">
+          Avoid clicking unknown links and verify sender identity.
+        </p>
+      </div>
+
+    </div>
+
   </div>
 )}
 

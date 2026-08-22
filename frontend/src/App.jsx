@@ -1,10 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [threatText, setThreatText] = useState("");
   const [result, setResult] = useState("");
   const [riskLevel, setRiskLevel] = useState("");
   const [keywords, setKeywords] = useState([]);
+  const [recommendation, setRecommendation] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+  if (!loading) {
+    setDots("");
+    return;
+  }
+
+  const interval = setInterval(() => {
+    setDots((prev) => {
+      if (prev === "...") {
+        return "";
+      }
+
+      return prev + ".";
+    });
+  }, 500);
+
+  return () => clearInterval(interval);
+}, [loading]);
   return (
     <div className="min-h-screen bg-black text-white">
       
@@ -31,7 +53,14 @@ function App() {
           suspicious content, and cyber threats using Artificial Intelligence.
         </p>
 
-        <button className="mt-10 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition duration-300">
+        <button
+  onClick={() => {
+    document.getElementById("threat-analyzer").scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+  className="mt-10 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition duration-300"
+>
   Analyze Threat
 </button>
       </div>
@@ -69,7 +98,7 @@ function App() {
   </div>
 
 </div>
-<div className="px-10 pb-24">
+<div id="threat-analyzer" className="px-10 pb-24">
 
   <div className="bg-gray-900 border border-cyan-500 rounded-3xl p-8 max-w-4xl mx-auto">
 
@@ -92,6 +121,7 @@ function App() {
       <button
   onClick={async () => {
     try {
+      setLoading(true);
   const response = await fetch("http://localhost:5000/analyze", {
     method: "POST",
     headers: {
@@ -105,16 +135,21 @@ function App() {
   const data = await response.json();
 
   setResult(data.result);
-  setRiskLevel(data.riskLevel);
-  setKeywords(data.keywords);
+
+setRiskLevel(data.riskLevel);
+setKeywords(data.keywords);
+setRecommendation(data.recommendation);
 
 } catch (error) {
   console.log(error);
+} finally {
+  setLoading(false);
 }
   }}
+  disabled={loading}
   className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-xl transition duration-300"
 >
-  Analyze Now
+  {loading ? `Analyzing${dots}` : "Analyze Now"}
 </button>
     </div>
     {result && (
@@ -131,9 +166,9 @@ function App() {
           Threat Status
         </h4>
 
-        <p className="text-white text-lg">
-          {result}
-        </p>
+        <p className="text-white text-lg break-words">
+  {JSON.stringify(result)}
+</p>
       </div>
 
       <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">
@@ -160,7 +195,7 @@ function App() {
         </h4>
 
         <p className="text-white">
-  {keywords.join(", ")}
+  {JSON.stringify(keywords)}
 </p>
       </div>
 
@@ -170,7 +205,7 @@ function App() {
         </h4>
 
         <p className="text-white">
-          Avoid clicking unknown links and verify sender identity.
+          {recommendation}
         </p>
       </div>
 

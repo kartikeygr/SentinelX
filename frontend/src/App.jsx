@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Shield, Link, LockKeyhole } from "lucide-react";
 
 function App() {
   const [threatText, setThreatText] = useState("");
@@ -30,98 +31,176 @@ function App() {
   return (
     <div className="min-h-screen bg-black text-white">
       
-      <nav className="flex justify-between items-center px-10 py-6 border-b border-gray-800">
-        <h1 className="text-3xl font-bold text-cyan-400">
-          SentinelX
-        </h1>
+     <nav className="flex justify-between items-center px-6 md:px-10 py-5 border-b border-gray-800/70 bg-black/80 backdrop-blur-md sticky top-0 z-50">
 
-        <div className="space-x-6 text-gray-300">
-          <a href="#" className="hover:text-cyan-400">Home</a>
-          <a href="#" className="hover:text-cyan-400">Features</a>
-          <a href="#" className="hover:text-cyan-400">Dashboard</a>
-        </div>
-      </nav>
+  <h1 className="text-2xl font-bold tracking-tight text-white">
+    Sentinel<span className="text-cyan-400">X</span>
+  </h1>
 
-      <div className="flex flex-col items-center justify-center text-center mt-32 px-4">
+  <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
+    <a href="#" className="hover:text-white transition">
+      Home
+    </a>
 
-        <h2 className="text-6xl font-extrabold text-cyan-400 leading-tight">
-          AI-Powered <br /> Cyber Threat Detection
-        </h2>
+    <a href="#threat-analyzer" className="hover:text-white transition">
+      Analyzer
+    </a>
 
-        <p className="text-gray-400 mt-6 max-w-2xl text-lg">
-          SentinelX helps users detect phishing messages, scam URLs,
-          suspicious content, and cyber threats using Artificial Intelligence.
-        </p>
+    <a href="#" className="hover:text-white transition">
+      Dashboard
+    </a>
+  </div>
 
-        <button
-  onClick={() => {
-    document.getElementById("threat-analyzer").scrollIntoView({
-      behavior: "smooth",
-    });
-  }}
-  className="mt-10 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition duration-300"
->
-  Analyze Threat
-</button>
-      </div>
+  <button className="border border-gray-700 hover:border-cyan-400 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm transition">
+    Sign In
+  </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-10 mt-24 pb-20">
+</nav>
 
-  <div className="bg-gray-900 border border-cyan-500 rounded-2xl p-6 hover:scale-105 transition duration-300">
-    <h3 className="text-2xl font-bold text-cyan-400 mb-4">
+      <div className="relative flex flex-col items-center justify-center text-center min-h-[75vh] px-6 overflow-hidden">
+
+  <div className="absolute top-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl"></div>
+
+  <div className="relative z-10">
+
+    <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-gray-800 bg-gray-900/60 text-sm text-gray-400">
+      <span className="w-2 h-2 rounded-full bg-green-400"></span>
+      AI-powered cybersecurity analysis
+    </div>
+
+    <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight max-w-5xl">
+      Detect threats.
+      <br />
+      <span className="text-cyan-400">
+        Understand risk.
+      </span>
+    </h2>
+
+    <p className="text-gray-400 mt-6 max-w-2xl mx-auto text-lg leading-relaxed">
+      SentinelX uses contextual AI to analyze suspicious messages,
+      identify potential cyber threats, and provide actionable
+      security recommendations.
+    </p>
+
+    <button
+      onClick={() => {
+        document.getElementById("threat-analyzer").scrollIntoView({
+          behavior: "smooth",
+        });
+      }}
+      className="mt-10 bg-cyan-400 hover:bg-cyan-300 text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/10"
+    >
+      Start Analysis →
+    </button>
+
+    <p className="text-gray-600 text-sm mt-5">
+      Analyze messages, suspicious content and URLs
+    </p>
+
+  </div>
+
+</div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 px-6 md:px-10 max-w-6xl mx-auto pb-24">
+
+  {/* Scam Detection */}
+  <div className="group bg-gray-900/40 border border-gray-800 rounded-2xl p-7 hover:border-cyan-500/40 hover:bg-gray-900/70 transition-all duration-300">
+
+    <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-cyan-500/10 mb-6">
+      <Shield className="w-5 h-5 text-cyan-400" />
+    </div>
+
+    <h3 className="text-xl font-semibold text-white mb-3">
       Scam Detection
     </h3>
 
-    <p className="text-gray-400">
-      Detect phishing messages, fake offers, and scam content using AI analysis.
+    <p className="text-gray-400 text-sm leading-relaxed">
+      Detect phishing messages, fraudulent offers, social engineering,
+      and suspicious content using contextual AI analysis.
     </p>
+
   </div>
 
-  <div className="bg-gray-900 border border-cyan-500 rounded-2xl p-6 hover:scale-105 transition duration-300">
-    <h3 className="text-2xl font-bold text-cyan-400 mb-4">
+  {/* URL Analysis */}
+  <div className="group bg-gray-900/40 border border-gray-800 rounded-2xl p-7 hover:border-cyan-500/40 hover:bg-gray-900/70 transition-all duration-300">
+
+    <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-cyan-500/10 mb-6">
+      <Link className="w-5 h-5 text-cyan-400" />
+    </div>
+
+    <h3 className="text-xl font-semibold text-white mb-3">
       URL Analysis
     </h3>
 
-    <p className="text-gray-400">
-      Analyze suspicious URLs and identify possible phishing websites instantly.
+    <p className="text-gray-400 text-sm leading-relaxed">
+      Analyze suspicious links and identify potential phishing
+      or malicious URL patterns.
     </p>
+
   </div>
 
-  <div className="bg-gray-900 border border-cyan-500 rounded-2xl p-6 hover:scale-105 transition duration-300">
-    <h3 className="text-2xl font-bold text-cyan-400 mb-4">
+  {/* Password Security */}
+  <div className="group bg-gray-900/40 border border-gray-800 rounded-2xl p-7 hover:border-cyan-500/40 hover:bg-gray-900/70 transition-all duration-300">
+
+    <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-cyan-500/10 mb-6">
+      <LockKeyhole className="w-5 h-5 text-cyan-400" />
+    </div>
+
+    <h3 className="text-xl font-semibold text-white mb-3">
       Password Security
     </h3>
 
-    <p className="text-gray-400">
-      Check password strength and improve cybersecurity awareness.
+    <p className="text-gray-400 text-sm leading-relaxed">
+      Evaluate password strength and provide recommendations
+      for stronger account security.
     </p>
+
   </div>
 
 </div>
 <div id="threat-analyzer" className="px-10 pb-24">
 
-  <div className="bg-gray-900 border border-cyan-500 rounded-3xl p-8 max-w-4xl mx-auto">
+  <div className="bg-gray-950/70 border border-gray-800 rounded-3xl p-8 md:p-10 max-w-4xl mx-auto shadow-2xl shadow-black/30">
 
-    <h2 className="text-4xl font-bold text-cyan-400 text-center mb-6">
-      Threat Analyzer
-    </h2>
+    <div className="text-center mb-8">
 
-    <p className="text-gray-400 text-center mb-8">
-      Paste suspicious messages, emails, or URLs to analyze cyber threats using AI.
-    </p>
 
-    <textarea
-  placeholder="Paste suspicious content here..."
-  value={threatText}
-  onChange={(e) => setThreatText(e.target.value)}
-  className="w-full h-40 bg-black border border-gray-700 rounded-xl p-4 text-white focus:outline-none focus:border-cyan-400"
-></textarea>
+  <h2 className="text-3xl md:text-4xl font-bold text-white">
+    Threat Analyzer
+  </h2>
 
+</div>
+
+    <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8 leading-relaxed">
+  Analyze suspicious messages, emails, or URLs using contextual AI
+  and receive a clear security assessment.
+</p>
+
+    <div className="relative">
+
+  <textarea
+    placeholder="Paste a suspicious message, email, or URL here..."
+    value={threatText}
+    onChange={(e) => setThreatText(e.target.value)}
+    maxLength={5000}
+    className="w-full h-44 bg-black/60 border border-gray-800 rounded-2xl p-5 pr-16 text-white placeholder-gray-600 resize-none focus:outline-none focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20 transition"
+  ></textarea>
+
+  <span className="absolute bottom-4 right-4 text-xs text-gray-600">
+    {threatText.length} / 5000
+  </span>
+
+</div>
     <div className="flex justify-center mt-6">
       <button
   onClick={async () => {
     try {
-      setLoading(true);
+  setLoading(true);
+  setResult("");
+  setRiskLevel("");
+  setKeywords([]);
+  setRecommendation("");
+
   const response = await fetch("http://localhost:5000/analyze", {
     method: "POST",
     headers: {
@@ -147,17 +226,19 @@ setRecommendation(data.recommendation);
 }
   }}
   disabled={loading}
-  className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-xl transition duration-300"
+  className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/10"
 >
   {loading ? `Analyzing${dots}` : "Analyze Now"}
 </button>
     </div>
     {result && (
-  <div className="mt-8 bg-black border border-cyan-500 rounded-2xl p-6">
+  <div className="mt-10 bg-black/40 border border-gray-800 rounded-2xl p-6 md:p-8">
 
-    <h3 className="text-3xl text-cyan-400 font-bold text-center mb-6">
-      Threat Analysis Report
-    </h3>
+    <div className="mb-8">
+  <h3 className="text-2xl font-bold text-white">
+    Threat Analysis Report
+  </h3>
+</div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -167,7 +248,7 @@ setRecommendation(data.recommendation);
         </h4>
 
         <p className="text-white text-lg break-words">
-  {JSON.stringify(result)}
+  {result}
 </p>
       </div>
 
@@ -176,17 +257,27 @@ setRecommendation(data.recommendation);
           Risk Level
         </h4>
 
-        <p
-  className={`text-lg font-semibold ${
+        <div
+  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold ${
     riskLevel === "High"
-      ? "text-red-400"
+      ? "bg-red-500/10 text-red-400"
       : riskLevel === "Medium"
-      ? "text-yellow-400"
-      : "text-green-400"
+      ? "bg-yellow-500/10 text-yellow-400"
+      : "bg-green-500/10 text-green-400"
   }`}
 >
+  <span
+    className={`w-2 h-2 rounded-full ${
+      riskLevel === "High"
+        ? "bg-red-400"
+        : riskLevel === "Medium"
+        ? "bg-yellow-400"
+        : "bg-green-400"
+    }`}
+  ></span>
+
   {riskLevel}
-</p>
+</div>
       </div>
 
       <div className="bg-gray-900 p-5 rounded-xl border border-gray-700">

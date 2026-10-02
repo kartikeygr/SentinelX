@@ -10,6 +10,7 @@ function App() {
   const [recommendation, setRecommendation] = useState("");
   const [loading, setLoading] = useState(false);
   const [dots, setDots] = useState("");
+  const [engine, setEngine] = useState("auto");
 
   // ── New UI-only state: mobile nav toggle ─────────────────────────
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,6 +48,7 @@ function App() {
         },
         body: JSON.stringify({
           text: threatText,
+          engine: engine,
         }),
       });
 
@@ -276,7 +278,28 @@ function App() {
             </span>
           </div>
 
-          <div className="flex justify-center mt-6">
+<div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-5">
+  <label
+    htmlFor="ai-engine"
+    className="text-sm text-slate-400"
+  >
+    AI Engine
+  </label>
+
+  <select
+    id="ai-engine"
+    value={engine}
+    onChange={(e) => setEngine(e.target.value)}
+    disabled={loading}
+    className="bg-[#0A0E14] border border-slate-800 text-slate-200 text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
+  >
+    <option value="auto">Auto — Recommended</option>
+    <option value="gemini">Gemini API — Online</option>
+    <option value="local">Local LLM — Offline</option>
+  </select>
+</div>
+
+<div className="flex justify-center mt-6">
             <button
               onClick={handleAnalyze}
               disabled={loading}

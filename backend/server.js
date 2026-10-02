@@ -2,6 +2,7 @@ require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const cors = require("cors");
+const { analyzeWithOllama } = require("./services/ollamaService");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -16,13 +17,21 @@ app.get("/", (req, res) => {
 
 app.post("/analyze", async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, engine = "auto" } = req.body;
+console.log("ENGINE RECEIVED:", engine);
+    // Local LLM selected
+    if (engine === "local") {
+      const localResult = await analyzeWithOllama(text);
+      return res.json(localResult);
+    }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
-    });
+    // Try Gemini for "gemini" and "auto"
+    try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3.6-flash",
+      });
 
-    const prompt = `
+      const prompt = `
 You are SentinelX, an AI cybersecurity threat detector.
 
 Analyze the following message for:
@@ -59,33 +68,62 @@ Respond ONLY in this JSON format:
 }
 `;
 
-    const result = await model.generateContent(prompt);
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
 
-    const responseText = result.response.text();
+      console.log(responseText);
 
-    console.log(responseText);
+      const cleanedResponse = responseText
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
 
-    const cleanedResponse = responseText
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+      let parsedData;
 
-    let parsedData;
+      try {
+        parsedData = JSON.parse(cleanedResponse);
+      } catch {
+        parsedData = {
+          result: cleanedResponse,
+          riskLevel: "Medium",
+          keywords: ["AI detected"],
+          recommendation: "Be cautious with suspicious messages.",
+        };
+      }
 
-try {
-  parsedData = JSON.parse(cleanedResponse);
-} catch {
-  parsedData = {
-    result: cleanedResponse,
-    riskLevel: "Medium",
-    keywords: ["AI detected"],
-    recommendation: "Be cautious with suspicious messages.",
-  };
-}
+      return res.json(parsedData);
 
-    console.log(parsedData);
+    } catch (geminiError) {
 
-res.json(parsedData);
+      // Auto mode: Gemini failed → use Local LLM
+      if (engine === "auto") {
+        console.log("Gemini failed. Switching to Local LLM...");
+
+        try {
+          const localResult = await analyzeWithOllama(text);
+          return res.json(localResult);
+        } catch (ollamaError) {
+          console.log("Local LLM also failed:", ollamaError);
+
+          return res.json({
+            result: "AI Analysis Failed",
+            riskLevel: "Unknown",
+            keywords: ["error"],
+            recommendation: "Both Gemini and Local AI are unavailable.",
+          });
+        }
+      }
+
+      // Gemini was explicitly selected
+      console.log("Gemini failed:", geminiError);
+
+      return res.json({
+        result: "Gemini Analysis Failed",
+        riskLevel: "Unknown",
+        keywords: ["error"],
+        recommendation: "Check your internet connection and try again.",
+      });
+    }
 
   } catch (error) {
     console.log(error);

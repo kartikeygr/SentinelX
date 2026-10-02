@@ -3,7 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const cors = require("cors");
 const { analyzeWithOllama } = require("./services/ollamaService");
-
+const db = require("./services/database");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const app = express();
@@ -14,6 +14,37 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("SentinelX Backend Running");
 });
+app.get("/history", (req, res) => {
+  try {
+    const history = db
+      .prepare("SELECT * FROM threat_history ORDER BY id DESC")
+      .all();
+
+    res.json(history);
+  } catch (error) {
+    console.log("History fetch error:", error);
+
+    res.status(500).json({
+      error: "Failed to fetch threat history",
+    });
+  }
+});
+function saveThreatHistory(text, result) {
+  const insert = db.prepare(`
+    INSERT INTO threat_history
+    (text, result, riskLevel, keywords, recommendation, engine)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+
+  insert.run(
+    text,
+    result.result,
+    result.riskLevel,
+    JSON.stringify(result.keywords),
+    result.recommendation,
+    result.engine || "unknown"
+  );
+}
 
 app.post("/analyze", async (req, res) => {
   try {
@@ -21,9 +52,14 @@ app.post("/analyze", async (req, res) => {
 console.log("ENGINE RECEIVED:", engine);
     // Local LLM selected
     if (engine === "local") {
-      const localResult = await analyzeWithOllama(text);
-      return res.json(localResult);
-    }
+  const localResult = await analyzeWithOllama(text);
+
+  localResult.engine = "local";
+
+  saveThreatHistory(text, localResult);
+
+  return res.json(localResult);
+}
 
     // Try Gemini for "gemini" and "auto"
     try {
@@ -91,17 +127,26 @@ Respond ONLY in this JSON format:
         };
       }
 
-      return res.json(parsedData);
+      parsedData.engine = "gemini";
+
+saveThreatHistory(text, parsedData);
+
+return res.json(parsedData);
 
     } catch (geminiError) {
 
       // Auto mode: Gemini failed → use Local LLM
       if (engine === "auto") {
-        console.log("Gemini failed. Switching to Local LLM...");
+  console.log("Gemini failed. Switching to Local LLM...");
 
-        try {
-          const localResult = await analyzeWithOllama(text);
-          return res.json(localResult);
+  try {
+    const localResult = await analyzeWithOllama(text);
+
+    localResult.engine = "local";
+
+    saveThreatHistory(text, localResult);
+
+    return res.json(localResult);
         } catch (ollamaError) {
           console.log("Local LLM also failed:", ollamaError);
 

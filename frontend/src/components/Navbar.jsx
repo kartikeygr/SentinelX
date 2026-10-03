@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Menu, X, Terminal, Radio } from "lucide-react";
+import { Shield, Menu, X, Radio } from "lucide-react";
 
 export default function Navbar({ activeSection, historyCount = 0 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,11 +14,10 @@ export default function Navbar({ activeSection, historyCount = 0 }) {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#hero", id: "hero" },
-    { name: "Analyzer", href: "#threat-analyzer", id: "threat-analyzer" },
-    { name: "Dashboard", href: "#system-status", id: "system-status" },
-    { name: "History", href: "#threat-history", id: "threat-history", count: historyCount },
-  ];
+  { name: "Home", href: "#hero", id: "hero" },
+  { name: "Dashboard", href: "#system-status", id: "system-status" },
+  { name: "History", href: "#threat-history", id: "threat-history", count: historyCount },
+];
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
@@ -37,12 +36,12 @@ export default function Navbar({ activeSection, historyCount = 0 }) {
           : "border-b border-slate-800/80 bg-[#05080E]/75 backdrop-blur-md"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-5 sm:px-8 py-3.5">
+      <div className="max-w-7xl mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8 py-3.5">
         {/* Brand logo & title */}
         <a
           href="#hero"
           onClick={(e) => handleNavClick(e, "#hero")}
-          className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg py-1 px-1.5"
+          className="col-start-1 justify-self-start flex items-center gap-2 sm:gap-3 min-w-0 shrink-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg py-1 px-1.5"
         >
           <div className="relative w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.35)] transition-all">
             <Shield className="w-5 h-5 transition-transform group-hover:scale-110" />
@@ -65,7 +64,7 @@ export default function Navbar({ activeSection, historyCount = 0 }) {
         </a>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-1 bg-[#0A0E17]/80 border border-slate-800/80 rounded-xl p-1 shadow-inner">
+        <div className="hidden lg:flex col-start-2 justify-self-center items-center gap-1 bg-[#0A0E17]/80 border border-slate-800/80 rounded-xl p-1 shadow-inner">
           {navLinks.map((link) => {
             const isActive = activeSection === link.id;
             return (
@@ -94,25 +93,16 @@ export default function Navbar({ activeSection, historyCount = 0 }) {
         </div>
 
         {/* System status pill & Action */}
-        <div className="hidden sm:flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0A0E17] border border-slate-800 text-[11px] font-mono text-slate-300">
-            <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span className="text-slate-400">STATUS:</span>
-            <span className="text-emerald-400 font-semibold">GRID ACTIVE</span>
-          </div>
-
-          <a
-            href="#threat-analyzer"
-            onClick={(e) => handleNavClick(e, "#threat-analyzer")}
-            className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold font-mono text-xs px-4 py-2 rounded-lg transition-all shadow-[0_0_16px_rgba(6,182,212,0.3)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-          >
-            <Terminal className="w-3.5 h-3.5" />
-            Launch Console
-          </a>
-        </div>
+<div className="hidden sm:flex col-start-2 lg:col-start-3 justify-self-center lg:justify-self-end items-center">
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0A0E17] border border-slate-800 text-[11px] font-mono text-slate-300">
+    <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+    <span className="text-slate-400">STATUS:</span>
+    <span className="text-emerald-400 font-semibold">GRID ACTIVE</span>
+  </div>
+</div>
 
         {/* Mobile menu hamburger toggle */}
-        <div className="flex sm:hidden items-center gap-2">
+        <div className="flex lg:hidden col-start-3 justify-self-end items-center">
           <button
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
@@ -126,7 +116,7 @@ export default function Navbar({ activeSection, historyCount = 0 }) {
 
       {/* Mobile drawer panel */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-slate-800/80 bg-[#05080E]/98 px-5 py-5 flex flex-col gap-3 font-mono text-sm shadow-2xl backdrop-blur-2xl">
+        <div className="lg:hidden border-t border-slate-800/80 bg-[#05080E]/98 px-5 py-5 flex flex-col gap-3 font-mono text-sm shadow-2xl backdrop-blur-2xl">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 text-xs text-slate-400">
             <span>GRID TELEMETRY</span>
             <span className="inline-flex items-center gap-1.5 text-emerald-400">

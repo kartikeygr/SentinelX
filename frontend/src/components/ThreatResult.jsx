@@ -170,7 +170,7 @@ export default function ThreatResult({
               <p className="text-slate-500 text-xs font-mono">
                 {analysisMode === "password"
   ? "No significant password weaknesses detected."
-  : "No malicious keywords detected (benign payload)."}
+  : "No specific malicious indicators identified."}
               </p>
             )}
           </div>

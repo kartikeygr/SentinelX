@@ -44,7 +44,24 @@ Rules:
 4. If there are no suspicious keywords, return [].
 5. Do not invent threats.
 6. Base the analysis only on the provided message.
+IMPORTANT SCAM DETECTION RULES:
 
+- Messages involving unexpected lottery winnings, prize claims, processing fees,
+  advance payments, or requests for bank/payment details should be treated as
+  potential financial scams.
+- Urgent requests for money or financial information are strong risk indicators.
+- Do not classify a message as Legitimate merely because it does not contain a link.
+- Consider the combination of multiple suspicious indicators rather than requiring
+  a specific keyword.
+  - Messages claiming that an account will be locked, suspended, or closed
+  unless the user acts immediately should be treated as potential phishing
+  or social engineering.
+- Requests to provide, confirm, or enter passwords or other credentials
+  through an unsolicited message are strong phishing indicators.
+- Do not assume a message is legitimate merely because it mentions a real
+  company, bank, platform, or service.
+- Never recommend that a user send or confirm their password in response to
+  an unsolicited message.
 Return ONLY valid JSON:
 
 {

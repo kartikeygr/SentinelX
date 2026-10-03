@@ -102,6 +102,77 @@ function App() {
 
   // Primary Threat Analysis Handler (preserving POST http://localhost:5000/analyze)
   const handleAnalyze = async () => {
+    if (analysisMode === "password") {
+  const password = threatText;
+
+  if (!password) {
+    setResult("Password Required");
+    setRiskLevel("Unknown");
+    setKeywords([]);
+    setRecommendation("Enter a password to perform the local security audit.");
+    setEngineUsed("local");
+    return;
+  }
+
+  let score = 0;
+  const findings = [];
+
+  // Length
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (password.length >= 16) score += 1;
+
+  // Character diversity
+  if (/[a-z]/.test(password)) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/[0-9]/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+  // Common weak patterns
+  if (/password|123456|qwerty|admin|letmein/i.test(password)) {
+    score -= 2;
+    findings.push("common password pattern");
+  }
+
+  if (/^(.)\1+$/.test(password)) {
+    score -= 2;
+    findings.push("repeated character pattern");
+  }
+
+  if (/1234|abcd|qwer/i.test(password)) {
+    score -= 1;
+    findings.push("predictable sequence");
+  }
+
+  let strength;
+  let recommendationText;
+
+  if (score <= 2) {
+    strength = "Weak";
+    recommendationText =
+      "Use a longer password with uppercase, lowercase, numbers, and special characters.";
+  } else if (score <= 5) {
+    strength = "Medium";
+    recommendationText =
+      "Increase the password length and avoid predictable or common patterns.";
+  } else {
+    strength = "Strong";
+    recommendationText =
+      "This password has good structural strength. Avoid reusing it across different accounts.";
+  }
+
+  if (findings.length > 0) {
+    recommendationText += ` Detected: ${findings.join(", ")}.`;
+  }
+
+  setResult(`Password Strength: ${strength}`);
+  setRiskLevel(strength === "Strong" ? "Low" : strength === "Medium" ? "Medium" : "High");
+  setKeywords(findings);
+  setRecommendation(recommendationText);
+  setEngineUsed("local");
+
+  return;
+}
     if (!threatText.trim()) return;
 
     try {
@@ -207,6 +278,12 @@ const response = await fetch(endpoint, {
         <Features
   onUrlAnalysis={() => {
     setAnalysisMode("url");
+    setThreatText("");
+    handleScrollTo("threat-analyzer");
+  }}
+  onPasswordAnalysis={() => {
+    setAnalysisMode("password");
+    setThreatText("");
     handleScrollTo("threat-analyzer");
   }}
 />

@@ -10,6 +10,7 @@ import {
   Sparkles,
   Terminal,
   Activity,
+  LockKeyhole,
 } from "lucide-react";
 import { getRiskStyle, safeParseKeywords } from "../utils/formatters";
 
@@ -19,6 +20,7 @@ export default function ThreatResult({
   keywords = [],
   recommendation,
   engineUsed,
+  analysisMode,
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -115,21 +117,26 @@ export default function ThreatResult({
               Threat Status
             </span>
 
-            {engineUsed && (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400 px-2.5 py-0.5 rounded bg-slate-900 border border-slate-800">
-                {engineUsed === "local" ? (
-                  <>
-                    <Cpu className="w-3 h-3 text-cyan-400" />
-                    <span>Engine: sentinelx-local (Air-Gapped)</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-3 h-3 text-emerald-400" />
-                    <span>Engine: Gemini API (Cloud)</span>
-                  </>
-                )}
-              </span>
-            )}
+           {engineUsed && (
+  <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400 px-2.5 py-0.5 rounded bg-slate-900 border border-slate-800">
+    {analysisMode === "password" ? (
+      <>
+        <LockKeyhole className="w-3 h-3 text-cyan-400" />
+        <span>Engine: Local Password Audit</span>
+      </>
+    ) : engineUsed === "local" ? (
+      <>
+        <Cpu className="w-3 h-3 text-cyan-400" />
+        <span>Engine: sentinelx-local (Local Offline)</span>
+      </>
+    ) : (
+      <>
+        <Sparkles className="w-3 h-3 text-emerald-400" />
+        <span>Engine: Gemini API (Cloud)</span>
+      </>
+    )}
+  </span>
+)}
           </div>
           <p className="text-slate-100 text-lg font-mono font-medium leading-relaxed break-words">
             {result}
@@ -142,7 +149,9 @@ export default function ThreatResult({
           <div className="bg-[#0B101C]/80 border border-slate-800 rounded-xl p-5">
             <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
               <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-              Suspicious Keywords & Artifacts
+{analysisMode === "password"
+  ? "Password Security Indicators"
+  : "Suspicious Keywords & Artifacts"}
             </h4>
 
             {parsedKeywords.length > 0 ? (
@@ -159,7 +168,9 @@ export default function ThreatResult({
               </div>
             ) : (
               <p className="text-slate-500 text-xs font-mono">
-                No malicious keywords detected (benign payload).
+                {analysisMode === "password"
+  ? "No significant password weaknesses detected."
+  : "No malicious keywords detected (benign payload)."}
               </p>
             )}
           </div>

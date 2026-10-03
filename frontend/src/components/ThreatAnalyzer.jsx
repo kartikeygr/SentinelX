@@ -8,6 +8,8 @@ import {
   Zap,
   Shield,
   Layers,
+  Eye,
+EyeOff,
 } from "lucide-react";
 import ThreatResult from "./ThreatResult";
 
@@ -28,6 +30,7 @@ export default function ThreatAnalyzer({
   engineUsed,
 }) {
   const [activeTab, setActiveTab] = useState("manual");
+  const [showPassword, setShowPassword] = useState(false);
   
 
   const samplePresets = [
@@ -73,7 +76,9 @@ export default function ThreatAnalyzer({
             <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-xl">
               {analysisMode === "url"
   ? "Submit a suspicious URL for AI-powered web threat assessment."
-  : "Paste suspicious messages, emails, or SMS scams for contextual multi-vector threat assessment."}
+  : analysisMode === "password"
+    ? "Evaluate password strength locally without sending or storing the password."
+    : "Paste suspicious messages, emails, or SMS scams for contextual multi-vector threat assessment."}
             </p>
           </div>
 
@@ -192,7 +197,23 @@ export default function ThreatAnalyzer({
         : "bg-[#070B12] text-slate-400 border-slate-800 hover:text-white"
     }`}
   >
-    URL ANALYSIS
+      URL ANALYSIS
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      setAnalysisMode("password");
+      setThreatText("");
+    }}
+    disabled={loading}
+    className={`px-4 py-2 rounded-lg text-xs font-mono border transition-all ${
+      analysisMode === "password"
+        ? "bg-cyan-500/15 text-cyan-300 border-cyan-400/50"
+        : "bg-[#070B12] text-slate-400 border-slate-800 hover:text-white"
+    }`}
+  >
+    PASSWORD AUDIT
   </button>
 </div>
         {/* Text Input Terminal Area */}
@@ -222,20 +243,49 @@ export default function ThreatAnalyzer({
               <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-scan z-20" />
             )}
 
-            <textarea
-              id="threat-input"
-              rows={6}
-             placeholder={
-  analysisMode === "url"
-    ? "Enter a URL such as https://example.com..."
-    : "Paste suspicious message, phishing email, or SMS payload here..."
-}
-              value={threatText}
-              onChange={(e) => setThreatText(e.target.value)}
-              maxLength={5000}
-              disabled={loading}
-              className="w-full bg-transparent p-4 sm:p-5 text-slate-100 placeholder-slate-600 font-mono text-sm leading-relaxed resize-none focus:outline-none"
-            />
+            {analysisMode === "password" ? (
+  <div className="relative">
+    <input
+      id="password-input"
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter your password for local security analysis..."
+      value={threatText}
+      onChange={(e) => setThreatText(e.target.value)}
+      maxLength={128}
+      disabled={loading}
+      className="w-full bg-transparent p-4 sm:p-5 pr-14 text-slate-100 placeholder-slate-600 font-mono text-sm leading-relaxed focus:outline-none"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      disabled={loading}
+      aria-label={showPassword ? "Hide password" : "Show password"}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-cyan-400 transition-colors"
+    >
+      {showPassword ? (
+        <EyeOff className="w-4 h-4" />
+      ) : (
+        <Eye className="w-4 h-4" />
+      )}
+    </button>
+  </div>
+) : (
+  <textarea
+    id="threat-input"
+    rows={6}
+    placeholder={
+      analysisMode === "url"
+        ? "Enter a URL such as https://example.com..."
+        : "Paste suspicious message, phishing email, or SMS payload here..."
+    }
+    value={threatText}
+    onChange={(e) => setThreatText(e.target.value)}
+    maxLength={5000}
+    disabled={loading}
+    className="w-full bg-transparent p-4 sm:p-5 text-slate-100 placeholder-slate-600 font-mono text-sm leading-relaxed resize-none focus:outline-none"
+  />
+)}
 
             {/* Bottom bar inside textarea box */}
             <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-800/80 text-[11px] font-mono text-slate-500">
@@ -254,7 +304,11 @@ export default function ThreatAnalyzer({
         <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
           <div className="text-xs font-mono text-slate-500 flex items-center gap-2">
             <Shield className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Audited & Stored to SQLite Incident History</span>
+            <span>
+  {analysisMode === "password"
+    ? "Local password audit — password not stored"
+    : "Audited & Stored to SQLite Incident History"}
+</span>
           </div>
 
           <button
@@ -283,6 +337,7 @@ export default function ThreatAnalyzer({
           keywords={keywords}
           recommendation={recommendation}
           engineUsed={engineUsed}
+          analysisMode={analysisMode}
         />
       </div>
     </section>

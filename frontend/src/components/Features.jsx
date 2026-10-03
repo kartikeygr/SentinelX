@@ -1,6 +1,9 @@
 import { Shield, Link, LockKeyhole, Sparkles, CheckCircle2, Clock } from "lucide-react";
 
-export default function Features({ onUrlAnalysis }) {
+export default function Features({
+  onUrlAnalysis,
+  onPasswordAnalysis,
+}) {
   const capabilities = [
     {
       title: "Scam & Phishing Detection",
@@ -33,20 +36,20 @@ isLive: true,
       ],
     },
     {
-      title: "Password & Credential Auditing",
-      status: "COMING SOON",
-      isLive: false,
-      icon: LockKeyhole,
-      iconColor: "text-slate-400",
-      iconBg: "bg-slate-800/50 border-slate-700/50",
-      description:
-        "Planned entropy verification and breached credential screening to identify vulnerable passwords, common patterns, and brute-force susceptibilities.",
-      highlights: [
-        "Cryptographic entropy calculation",
-        "Dictionary & pattern analysis",
-        "Breach database cross-reference",
-      ],
-    },
+  title: "Password & Credential Auditing",
+  status: "OPERATIONAL",
+  isLive: true,
+  icon: LockKeyhole,
+  iconColor: "text-cyan-400",
+  iconBg: "bg-cyan-500/10 border-cyan-500/20",
+  description:
+    "Evaluates password strength locally using length, character diversity, common patterns, and password composition rules without storing the password.",
+  highlights: [
+    "Password strength assessment",
+    "Character diversity analysis",
+    "Common pattern detection",
+  ],
+},
   ];
 
   return (
@@ -73,9 +76,25 @@ isLive: true,
           return (
             <div
   key={i}
-  onClick={cap.title === "Malicious URL Analysis" ? onUrlAnalysis : undefined}
-  role={cap.title === "Malicious URL Analysis" ? "button" : undefined}
-  tabIndex={cap.title === "Malicious URL Analysis" ? 0 : undefined}
+  onClick={
+  cap.title === "Malicious URL Analysis"
+    ? onUrlAnalysis
+    : cap.title === "Password & Credential Auditing"
+      ? onPasswordAnalysis
+      : undefined
+}
+ role={
+  cap.title === "Malicious URL Analysis" ||
+  cap.title === "Password & Credential Auditing"
+    ? "button"
+    : undefined
+}
+  tabIndex={
+  cap.title === "Malicious URL Analysis" ||
+  cap.title === "Password & Credential Auditing"
+    ? 0
+    : undefined
+}
   className={`relative group bg-[#0A0E17]/80 rounded-2xl p-7 border transition-all duration-300 flex flex-col justify-between ${
     cap.isLive
       ? "border-slate-800 hover:border-cyan-500/50 hover:bg-[#0E1524] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(6,182,212,0.15)]"

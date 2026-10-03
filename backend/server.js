@@ -3,6 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const cors = require("cors");
 const { analyzeWithOllama } = require("./services/ollamaService");
+const { analyzeUrl } = require("./services/urlAnalysisService");
 const db = require("./services/database");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -26,6 +27,60 @@ app.get("/history", (req, res) => {
 
     res.status(500).json({
       error: "Failed to fetch threat history",
+    });
+  }
+});
+app.post("/analyze-url", async (req, res) => {
+  try {
+    const { url, engine = "auto" } = req.body;
+
+    if (!url || !url.trim()) {
+      return res.status(400).json({
+        result: "URL is required",
+        riskLevel: "Unknown",
+        keywords: [],
+        recommendation: "Enter a URL to analyze.",
+      });
+    }
+
+    let parsedUrl;
+
+    try {
+      parsedUrl = new URL(url.trim());
+    } catch {
+      return res.status(400).json({
+        result: "Invalid URL",
+        riskLevel: "Unknown",
+        keywords: ["invalid URL"],
+        recommendation: "Enter a valid URL such as https://example.com",
+      });
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      return res.status(400).json({
+        result: "Unsupported URL",
+        riskLevel: "Unknown",
+        keywords: ["unsupported protocol"],
+        recommendation: "Use an HTTP or HTTPS URL.",
+      });
+    }
+
+    const cleanUrl = parsedUrl.href;
+
+    const analysis = await analyzeUrl(cleanUrl, engine);
+
+    saveThreatHistory(cleanUrl, analysis);
+
+    return res.json(analysis);
+
+  } catch (error) {
+    console.log("URL Analysis Error:", error);
+
+    res.status(500).json({
+      result: "URL Analysis Failed",
+      riskLevel: "Unknown",
+      keywords: ["error"],
+      recommendation: "Unable to analyze the URL. Please try again.",
     });
   }
 });

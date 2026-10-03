@@ -1,6 +1,6 @@
 import { Shield, Link, LockKeyhole, Sparkles, CheckCircle2, Clock } from "lucide-react";
 
-export default function Features() {
+export default function Features({ onUrlAnalysis }) {
   const capabilities = [
     {
       title: "Scam & Phishing Detection",
@@ -19,13 +19,13 @@ export default function Features() {
     },
     {
       title: "Malicious URL Analysis",
-      status: "COMING SOON",
-      isLive: false,
+      status: "OPERATIONAL",
+isLive: true,
       icon: Link,
       iconColor: "text-slate-400",
       iconBg: "bg-slate-800/50 border-slate-700/50",
       description:
-        "Deep URL inspection engine planned to evaluate typosquatting, zero-day redirection chains, obfuscated IP links, and known malicious domain blocklists.",
+  "Analyzes URLs for phishing patterns, suspicious domain structures, impersonation indicators, and other potential web-based threats using contextual AI.",
       highlights: [
         "Homograph & typosquatting detection",
         "Redirection hop-count evaluation",
@@ -72,13 +72,18 @@ export default function Features() {
           const Icon = cap.icon;
           return (
             <div
-              key={i}
-              className={`relative group bg-[#0A0E17]/80 rounded-2xl p-7 border transition-all duration-300 flex flex-col justify-between ${
-                cap.isLive
-                  ? "border-slate-800 hover:border-cyan-500/50 hover:bg-[#0E1524] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(6,182,212,0.15)]"
-                  : "border-slate-800/70 hover:border-slate-700 bg-[#090D15]/60 hover:-translate-y-0.5"
-              }`}
-            >
+  key={i}
+  onClick={cap.title === "Malicious URL Analysis" ? onUrlAnalysis : undefined}
+  role={cap.title === "Malicious URL Analysis" ? "button" : undefined}
+  tabIndex={cap.title === "Malicious URL Analysis" ? 0 : undefined}
+  className={`relative group bg-[#0A0E17]/80 rounded-2xl p-7 border transition-all duration-300 flex flex-col justify-between ${
+    cap.isLive
+      ? "border-slate-800 hover:border-cyan-500/50 hover:bg-[#0E1524] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(6,182,212,0.15)]"
+      : cap.title === "Malicious URL Analysis"
+        ? "border-slate-800/70 hover:border-cyan-500/40 hover:bg-[#0E1524] hover:-translate-y-1 cursor-pointer"
+        : "border-slate-800/70 hover:border-slate-700 bg-[#090D15]/60 hover:-translate-y-0.5"
+  }`}
+>
               <div>
                 {/* Header row: Icon & Status */}
                 <div className="flex items-center justify-between mb-6">

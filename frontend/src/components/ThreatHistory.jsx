@@ -34,6 +34,7 @@ export default function ThreatHistory({
   const [riskFilter, setRiskFilter] = useState("all");
   const [engineFilter, setEngineFilter] = useState("all");
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
   const toggleExpand = (id) => {
     setExpandedIds((prev) => {
@@ -269,7 +270,10 @@ export default function ThreatHistory({
       ) : (
         /* Event Timeline Cards */
         <div className="space-y-4">
-          {filteredHistory.map((item) => {
+  {(showAllHistory
+    ? filteredHistory
+    : filteredHistory.slice(0, 5)
+  ).map((item) => {
             const isExpanded = expandedIds.has(item.id);
             const risk = getRiskStyle(item.riskLevel);
             const keywordsList = safeParseKeywords(item.keywords);
@@ -414,7 +418,29 @@ export default function ThreatHistory({
                 )}
               </div>
             );
-          })}
+                    })}
+
+          {filteredHistory.length > 5 && (
+            <div className="flex justify-center mt-6">
+              <button
+                type="button"
+                onClick={() => setShowAllHistory((prev) => !prev)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0A101C] hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 text-xs font-mono text-slate-300 hover:text-cyan-300 transition-all"
+              >
+                {showAllHistory ? (
+                  <>
+                    <ChevronUp className="w-4 h-4" />
+                    <span>Show Less</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4" />
+                    <span>Show More ({filteredHistory.length - 5})</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </section>

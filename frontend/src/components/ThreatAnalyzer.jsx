@@ -12,6 +12,8 @@ import {
 import ThreatResult from "./ThreatResult";
 
 export default function ThreatAnalyzer({
+  analysisMode,
+  setAnalysisMode,
   threatText,
   setThreatText,
   engine,
@@ -26,6 +28,7 @@ export default function ThreatAnalyzer({
   engineUsed,
 }) {
   const [activeTab, setActiveTab] = useState("manual");
+  
 
   const samplePresets = [
     {
@@ -68,8 +71,9 @@ export default function ThreatAnalyzer({
               Threat Analyzer
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-xl">
-              Paste suspicious messages, emails, SMS scams, or URL payloads for
-              contextual multi-vector threat assessment.
+              {analysisMode === "url"
+  ? "Submit a suspicious URL for AI-powered web threat assessment."
+  : "Paste suspicious messages, emails, or SMS scams for contextual multi-vector threat assessment."}
             </p>
           </div>
 
@@ -152,12 +156,45 @@ export default function ThreatAnalyzer({
             <span>
               {engine === "auto" && "Auto Failover: Tries Gemini Cloud; automatically shifts to on-device Ollama if offline."}
               {engine === "gemini" && "Cloud Direct: Dispatches payload directly to Google Gemini 3.6 Flash endpoint."}
-              {engine === "local" && "Air-Gapped: Runs locally via Ollama sentinelx-local model with zero internet traffic."}
+              {engine === "local" && "Local Inference: Runs locally via Ollama sentinelx-local model without sending the payload to Gemini Cloud."}
             </span>
             <span className="hidden sm:inline text-cyan-400/80">READY</span>
           </div>
         </div>
+{/* Analysis Mode */}
+<div className="relative z-10 mb-4 flex gap-2">
+  <button
+    type="button"
+    onClick={() => {
+      setAnalysisMode("message");
+      setThreatText("");
+    }}
+    disabled={loading}
+    className={`px-4 py-2 rounded-lg text-xs font-mono border transition-all ${
+      analysisMode === "message"
+        ? "bg-cyan-500/15 text-cyan-300 border-cyan-400/50"
+        : "bg-[#070B12] text-slate-400 border-slate-800 hover:text-white"
+    }`}
+  >
+    MESSAGE ANALYSIS
+  </button>
 
+  <button
+    type="button"
+    onClick={() => {
+      setAnalysisMode("url");
+      setThreatText("");
+    }}
+    disabled={loading}
+    className={`px-4 py-2 rounded-lg text-xs font-mono border transition-all ${
+      analysisMode === "url"
+        ? "bg-cyan-500/15 text-cyan-300 border-cyan-400/50"
+        : "bg-[#070B12] text-slate-400 border-slate-800 hover:text-white"
+    }`}
+  >
+    URL ANALYSIS
+  </button>
+</div>
         {/* Text Input Terminal Area */}
         <div className="relative z-10">
           <div className="relative rounded-xl border border-slate-800 focus-within:border-cyan-400/70 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all bg-[#05080E]/95">
@@ -188,7 +225,11 @@ export default function ThreatAnalyzer({
             <textarea
               id="threat-input"
               rows={6}
-              placeholder="Paste suspicious message, phishing email, SMS payload, or malicious link here..."
+             placeholder={
+  analysisMode === "url"
+    ? "Enter a URL such as https://example.com..."
+    : "Paste suspicious message, phishing email, or SMS payload here..."
+}
               value={threatText}
               onChange={(e) => setThreatText(e.target.value)}
               maxLength={5000}

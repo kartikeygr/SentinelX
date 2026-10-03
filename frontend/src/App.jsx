@@ -26,6 +26,7 @@ function App() {
 
   // ── Active Navigation Section ─────────────────────────────────────
   const [activeSection, setActiveSection] = useState("hero");
+  const [analysisMode, setAnalysisMode] = useState("message");
 
   // Animated loading dots indicator
   useEffect(() => {
@@ -111,17 +112,22 @@ function App() {
       setRecommendation("");
       setEngineUsed("");
 
-      const response = await fetch("http://localhost:5000/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: threatText,
-          engine: engine,
-        }),
-      });
+      const endpoint =
+  analysisMode === "url"
+    ? "http://localhost:5000/analyze-url"
+    : "http://localhost:5000/analyze";
 
+const body =
+  analysisMode === "url"
+    ? { url: threatText, engine: engine }
+    : { text: threatText, engine: engine };
+
+const response = await fetch(endpoint, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body),
+});
+        
       const data = await response.json();
 
       setResult(data.result || "Analysis Completed");
@@ -173,7 +179,9 @@ function App() {
 
         {/* 3. Primary Threat Analyzer Console */}
         <ThreatAnalyzer
-          threatText={threatText}
+  analysisMode={analysisMode}
+  setAnalysisMode={setAnalysisMode}
+  threatText={threatText}
           setThreatText={setThreatText}
           engine={engine}
           setEngine={setEngine}
@@ -196,7 +204,12 @@ function App() {
         />
 
         {/* 5. Defense Modules & Capabilities Roadmap */}
-        <Features />
+        <Features
+  onUrlAnalysis={() => {
+    setAnalysisMode("url");
+    handleScrollTo("threat-analyzer");
+  }}
+/>
       </main>
 
       {/* ── Command Center Footer ── */}
